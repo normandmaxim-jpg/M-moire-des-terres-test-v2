@@ -1,0 +1,460 @@
+/*
+  ═══════════════════════════════════════════════
+  style.css — Victoriaville, mémoire & présent
+  ═══════════════════════════════════════════════
+
+  Ce fichier contient UNIQUEMENT les styles visuels.
+  Les effets déclenchés par le scroll (flou, apparitions)
+  sont dans script.js — mais les ANIMATIONS elles-mêmes
+  (fade, slide) sont définies ici avec "transition".
+*/
+
+@font-face {
+    font-family: "Archivo";
+    src: url("typographies/Archivo/static/Archivo-Regular.ttf") format("truetype");
+}
+
+
+/* ─────────────────────────────────────────────
+   VARIABLES GLOBALES
+   Modifie ces valeurs pour changer les couleurs
+   de tout le site d'un seul endroit.
+───────────────────────────────────────────── */
+:root {
+  --couleur-fond:       #0e0d0b;
+  --couleur-sepia:      #c8b99a;
+  --couleur-sepia-dark: #7a5c3a;
+  --couleur-papier:     #f0e8d8;
+  --couleur-texte:      rgba(220, 205, 180, 0.85);
+  --couleur-discret:    rgba(160, 145, 120, 0.5);
+  --couleur-vert:       #3d6b4a;
+  --couleur-vert-clair: #5ab070;
+}
+
+
+/* ─────────────────────────────────────────────
+   RESET : annule les marges par défaut
+   du navigateur sur tous les éléments
+───────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* ─────────────────────────────────────────────
+   BASE
+───────────────────────────────────────────── */
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--couleur-fond);
+  color: var(--couleur-texte);
+  font-family : "Archivo", sans-serif;
+  overflow-x: hidden;
+}
+
+
+/* ─────────────────────────────────────────────
+   STRUCTURE STICKY
+   .couloir = la zone longue qu'on scroll
+   .scene   = ce qui reste affiché à l'écran
+───────────────────────────────────────────── */
+.couloir {
+  height: 1000vh; /* ← change cette valeur pour allonger/raccourcir le scroll */
+  position: relative;
+}
+
+.scene {
+  position: sticky; /* reste collé en haut pendant qu'on scroll le .couloir */
+  top: 0;
+  height: 100vh;    /* occupe tout l'écran */
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ─────────────────────────────────────────────
+   FOND
+───────────────────────────────────────────── */
+.fond {
+  position: absolute;
+  inset: 0; /* équivaut à top:0; right:0; bottom:0; left:0 */
+  background: var(--couleur-fond);
+  transition: background 1.2s ease;
+  z-index: 0;
+}
+
+/* grain de film */
+.fond::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+
+/* ─────────────────────────────────────────────
+   BARRE DE PROGRESSION (en haut de la page)
+   Sa largeur est modifiée par script.js
+───────────────────────────────────────────── */
+.barre-progression {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0%; /* départ à 0, JS l'augmente jusqu'à 100% */
+  background: linear-gradient(to right, var(--couleur-sepia), var(--couleur-vert-clair));
+  z-index: 100;
+  transition: width 0.1s linear;
+}
+
+
+/* ─────────────────────────────────────────────
+   TITRE DISCRET EN HAUT
+───────────────────────────────────────────── */
+.entete {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(10px, 1.2vw, 12px); /* clamp = taille min, idéale, max */
+  color: var(--couleur-discret);
+  text-transform: uppercase;
+  z-index: 20;
+  white-space: nowrap;
+  transition: opacity 0.5s ease; /* JS modifie l'opacité */
+}
+
+
+/* ─────────────────────────────────────────────
+   LIGNE DE SÉPARATION AU CENTRE
+───────────────────────────────────────────── */
+.separateur {
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(160, 140, 110, 0.2) 20%,
+    rgba(160, 140, 110, 0.2) 80%,
+    transparent
+  );
+  z-index: 1;
+  transform: translateX(-0.5px);
+}
+
+
+/* ─────────────────────────────────────────────
+   COLONNES GAUCHE / DROITE
+───────────────────────────────────────────── */
+.col {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.col-droite { right: 0; }
+.col-gauche { left: 0; }
+
+
+/* ─────────────────────────────────────────────
+   PHOTO D'ARCHIVE (côté droit)
+   Le flou est appliqué dynamiquement par JS
+   via : archiveCadre.style.filter = "blur(Xpx)"
+───────────────────────────────────────────── */
+.archive-cadre {
+  width: min(300px, 38vw);
+  aspect-ratio: 3 / 4;   /* ← garde ce ratio OU supprime-le pour l'option B */
+  position: relative;
+  will-change: filter;
+  transition: filter 0.05s linear, opacity 0.1s linear;
+  overflow: hidden;       /* ← important pour recadrer proprement */
+}
+
+
+/* Le div placeholder (à remplacer par une vraie <img>) */
+.archive-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;      /* ← remplit la boîte, recadre si besoin */
+  object-position: center;/* ← centre le recadrage */
+  display: block;
+  filter: sepia(0.3) contrast(0.95);
+}
+
+.archive-annee {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(11px, 1.5vw, 14px);
+  letter-spacing: 0.25em;
+  color: var(--couleur-sepia-dark);
+  border: 0.5px solid rgba(120, 80, 40, 0.4);
+  padding: 4px 14px;
+}
+
+.archive-titre {
+  font-size: clamp(14px, 2vw, 18px);
+  color: var(--couleur-sepia-dark);
+  text-align: center;
+  line-height: 1.5;
+  padding: 0 1.5rem;
+  font-style: italic;
+}
+
+.archive-sous {
+  font-size: clamp(10px, 1.2vw, 12px);
+  letter-spacing: 0.15em;
+  color: rgba(100, 70, 40, 0.55);
+  text-transform: uppercase;
+}
+
+/* Double bordure style photo ancienne */
+.archive-cadre::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 1px solid rgba(180, 155, 110, 0.3);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.archive-cadre::after {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border: 0.5px solid rgba(180, 155, 110, 0.12);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* 2e séquence d'images */
+
+.archive-cadre-2 {
+  width: min(300px, 38vw);
+  aspect-ratio: 3 / 4;
+  position: relative;
+  overflow: hidden;
+  will-change: filter;
+  transition: filter 0.05s linear, opacity 0.1s linear;
+
+  /* état initial — cachée */
+  opacity: 0;
+  transform: translateX(40px); /* vient de la droite */
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.archive-cadre-2.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.archive-cadre-2 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* ─────────────────────────────────────────────
+   CARTE (côté gauche)
+
+   État de départ : invisible + décalée à gauche
+   Quand JS ajoute la classe .visible :
+   → opacity passe à 1 et translateX revient à 0
+   → la transition CSS fait l'animation automatiquement
+───────────────────────────────────────────── */
+.carte-cadre {
+  width: min(300px, 38vw);
+  aspect-ratio: 1 / 1.1;   /* ← garde le ratio fixe que tu veux */
+  border: 1px solid rgba(80, 130, 90, 0.35);
+  overflow: hidden;
+
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+/* ↓ état final (quand JS ajoute cette classe) */
+.carte-cadre.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.carte-cadre svg,
+.carte-cadre img,
+.carte-cadre iframe {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;        /* ← remplit la boîte sans déformer */
+  object-position: center;  /* ← centre le recadrage */
+  display: block;
+  border: 0;
+}
+
+
+/* ─────────────────────────────────────────────
+   TEXTE DU PÈRE
+
+   État de départ : invisible
+   Quand JS ajoute .visible → opacity 1
+   Au survol → flou (CSS pur, pas de JS !)
+───────────────────────────────────────────── */
+.texte-bloc {
+  position: absolute;
+  bottom: 8vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(600px, 80vw);
+  text-align: center;
+  z-index: 5;
+
+  /* état initial */
+  opacity: 0;
+  transition: opacity 0.9s ease; /* JS modifie aussi opacity directement pour le fade-out */
+}
+
+.texte-bloc.visible {
+  opacity: 1;
+}
+
+.texte-guillemet {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(48px, 6vw, 72px);
+  color: rgba(160, 130, 90, 0.18);
+  line-height: 0.5;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.texte-pere {
+  font-size: clamp(14px, 1.8vw, 18px);
+  line-height: 1.9;
+  color: var(--couleur-texte);
+  cursor: default;
+
+  /* ↓ transition pour le flou au survol */
+  transition: filter 0.5s ease, opacity 0.5s ease;
+}
+
+/*
+  FLOU AU SURVOL — CSS PUR
+  Aucun JavaScript nécessaire pour cet effet.
+  Quand la souris passe sur le texte, filter: blur s'applique.
+*/
+.texte-pere:hover {
+  filter: blur(4px);
+  opacity: 0.35;
+}
+
+.texte-source {
+  display: block;
+  margin-top: 14px;
+  font-size: clamp(10px, 1.2vw, 12px);
+  letter-spacing: 0.15em;
+  color: var(--couleur-discret);
+  text-transform: uppercase;
+}
+
+
+/* ─────────────────────────────────────────────
+   ÉCRAN DE FIN
+
+   Même logique : état initial invisible,
+   JS ajoute .visible pour le faire apparaître
+───────────────────────────────────────────── */
+.fin {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+
+  /* état initial */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.2s ease;
+}
+
+.fin.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fin-titre {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  color: var(--couleur-texte);
+  margin-bottom: 10px;
+}
+
+.fin-sous {
+  font-size: clamp(11px, 1.3vw, 14px);
+  letter-spacing: 0.2em;
+  color: var(--couleur-discret);
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+.fin-carte,
+.fin-image {
+  width: min(320px, 70vw);
+  border: 0.5px solid rgba(80, 130, 90, 0.4);
+  display: block;
+}
+
+
+/* ─────────────────────────────────────────────
+   INDICATEUR "scroller" en bas
+───────────────────────────────────────────── */
+.scroll-indic {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 20;
+  transition: opacity 0.5s ease; /* JS met opacity à 0 quand on commence */
+}
+
+.scroll-indic span {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--couleur-discret);
+  text-transform: uppercase;
+}
+
+.fleche-scroll {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(to bottom, var(--couleur-discret), transparent);
+  animation: glisse 1.8s ease-in-out infinite;
+}
+
+@keyframes glisse {
+  0%, 100% { transform: scaleY(1);   opacity: 0.5; }
+  50%       { transform: scaleY(0.4); opacity: 1;   }
+}
