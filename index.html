@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mémoire des terres</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <link rel="icon" type="image/png" href="images/Icone site web-V2.png"/>
+
+
+</head>
+<body>
+
+  <!--
+    ═══════════════════════════════════════
+    STRUCTURE DE LA PAGE
+    .couloir  = zone longue qui se scroll (500vh)
+    .scene    = ce qui reste visible à l'écran (sticky)
+    ═══════════════════════════════════════
+  -->
+
+  <div class="couloir" id="couloir">
+    <div class="scene" id="scene">
+
+      <!-- Fond de couleur (modifié par JS) -->
+      <div class="fond" id="fond"></div>
+
+      <!-- Barre de progression en haut de page -->
+      <div class="barre-progression" id="barreProgression"></div>
+
+      <!-- Titre discret en haut -->
+      <div class="entete" id="entete">Mémoire des terres</div>
+
+      <!-- Ligne de séparation au centre -->
+      <div class="separateur"></div>
+
+
+      <!-- ════════════════════════════════
+           CÔTÉ DROIT : photo d'archive
+      ════════════════════════════════ -->
+      <div class="col col-droite">
+        <div class="archive-cadre" id="archiveCadre">
+
+          <!--
+            POUR METTRE TA VRAIE PHOTO :
+            Remplace le div.archive-photo ci-dessous par :
+
+            <img
+              src="./images/archive.jpg"
+              alt="Victoriaville 1962"
+              class="archive-photo"
+            />
+
+            (place ton image dans un sous-dossier /images/)
+          -->
+      <div class="archive-cadre" id="archiveCadre">
+        <img
+    src="images/Carte arthabaska-1.jpeg"
+    alt="Canton d'Arthabaska 1845"
+    class="archive-photo"
+      />
+      </div>
+
+        </div>
+      </div>
+
+
+      <!-- ════════════════════════════════
+           CÔTÉ GAUCHE : carte actuelle
+      ════════════════════════════════ -->
+      <div class="col col-gauche">
+        <div class="carte-cadre" id="carteCadre">
+            <img src="images/Carte actuelle VICTORIAVILLE copy 2.jpg" alt="Carte Victoriaville actuelle" />
+        </div>
+      </div>
+
+
+      <!-- ════════════════════════════════
+           TEXTE DU PÈRE
+           Le flou au survol est dans style.css
+      ════════════════════════════════ -->
+      <div class="texte-bloc" id="texteBloc">
+        <span class="texte-guillemet">"</span>
+        <p class="texte-pere">
+         « La belle
+famille de mon
+oncle s’est fait
+exproprier de
+leurs terres
+pour que la ville
+construise le
+réservoir d’eau
+de la ville. »
+        </p>
+        <span class="texte-source">— André Normand</span>
+      </div>
+
+<div class="col col-droite">
+        <div class="archive-cadre-2" id="archiveCadre2">
+        <img
+    src="images/Vieilleimagemaison.png"
+    alt="Ancienne étable qui a été expropriée"
+    class="archive-photo"
+      />
+      </div>
+
+        </div>
+      </div>
+
+
+      <!-- ════════════════════════════════
+           ÉCRAN DE FIN
+      ════════════════════════════════ -->
+      <div class="fin" id="finEcran">
+        <div class="fin-titre">Victoriaville</div>
+        <div class="fin-sous">toujours là · Centre-du-Québec</div>
+
+        <!--
+          REMPLACE ce SVG par une vraie photo :
+          <img src="./images/victoriaville-2024.jpg" alt="Victoriaville aujourd'hui" class="fin-image" />
+        -->
+      
+
+
+      <!-- Flèche "scroller" au bas -->
+      <div class="scroll-indic" id="scrollIndic">
+        <span>scroller</span>
+        <div class="fleche-scroll"></div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!--
+    ═══════════════════════════════════════
+    LIEN VERS LE FICHIER JAVASCRIPT
+    Toujours placé EN BAS du body, APRÈS
+    tout le HTML — pour que les éléments
+    existent déjà quand JS les cherche.
+
+    Le src="script.js" signifie que script.js
+    doit être dans le MÊME dossier que index.html
+    ═══════════════════════════════════════
+  -->
+  <script src="script.js"></script>
+
+</body>
+</html>
